@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Yclone Admin</title>
+    <link rel="stylesheet" href="../css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="admin-logo">
+                <h2>YCLONE</h2>
+                <p>CMS Admin</p>
+            </div>
+            <nav class="admin-nav">
+                <a href="dashboard.html" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="edit-portfolio.html"><i class="fas fa-briefcase"></i> Portfolio</a>
+                <a href="edit-blog.html"><i class="fas fa-feather-alt"></i> Blog</a>
+                <a href="edit-about.html"><i class="fas fa-user-edit"></i> About Page</a>
+                <a href="../index.html" target="_blank"><i class="fas fa-external-link-alt"></i> Live Site</a>
+                <a href="#" id="logout-btn" style="margin-top:auto; color: #ff6b6b;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </nav>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-header">
+                <h1>Dashboard Overview</h1>
+                <p id="currentDate">Loading...</p>
+            </header>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon blue"><i class="fas fa-briefcase"></i></div>
+                    <div class="stat-value" id="project-count">...</div>
+                    <div class="stat-label">Portfolio Items</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green"><i class="fas fa-feather-alt"></i></div>
+                    <div class="stat-value" id="blog-count">...</div>
+                    <div class="stat-label">Blog Posts</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { auth, db, collection, getDocs, signOut, onAuthStateChanged } from '../js/firebase.js';
+
+        // 1. Auth Guard
+        onAuthStateChanged(auth, (user) => {
+            if (!user) window.location.href = 'index.html';
+        });
+
+        // 2. Logout
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            await signOut(auth);
+            window.location.href = 'index.html';
+        });
+
+        // 3. Date
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+        // 4. Fetch Stats
+        async function loadStats() {
+            try {
+                const portfolioSnap = await getDocs(collection(db, 'portfolio'));
+                document.getElementById('project-count').textContent = portfolioSnap.size;
+
+                const blogSnap = await getDocs(collection(db, 'blog'));
+                document.getElementById('blog-count').textContent = blogSnap.size;
+            } catch (e) {
+                console.log("Error loading stats", e);
+            }
+        }
+        loadStats();
+    </script>
+</body>
+</html>

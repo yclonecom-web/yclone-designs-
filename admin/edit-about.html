@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit About | Yclone Admin</title>
+    <link rel="stylesheet" href="../css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="admin-container">
+        <aside class="sidebar">
+            <div class="admin-logo"><h2>YCLONE</h2></div>
+            <nav class="admin-nav">
+                <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="edit-portfolio.html"><i class="fas fa-briefcase"></i> Portfolio</a>
+                <a href="edit-blog.html"><i class="fas fa-feather-alt"></i> Blog</a>
+                <a href="edit-about.html" class="active"><i class="fas fa-user-edit"></i> Edit About</a>
+                <a href="../index.html" target="_blank"><i class="fas fa-external-link-alt"></i> Live Site</a>
+            </nav>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-header">
+                <h1>Edit About Page</h1>
+                <button class="btn-primary" id="save-btn"><i class="fas fa-save"></i> Save Changes</button>
+            </header>
+
+            <div class="editor-wrapper" style="background: white; padding: 20px; border-radius: 8px;">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="about-name" class="form-control" style="width: 100%; padding: 8px; margin-bottom: 15px;">
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <input type="text" id="about-role" class="form-control" style="width: 100%; padding: 8px; margin-bottom: 15px;">
+                </div>
+                <div class="form-group">
+                    <label>Short Bio</label>
+                    <textarea id="about-bio" class="form-control" rows="4" style="width: 100%; padding: 8px; margin-bottom: 15px;"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Profile Image URL</label>
+                    <input type="url" id="about-image" class="form-control" style="width: 100%; padding: 8px; margin-bottom: 15px;" placeholder="https://...">
+                    <img id="image-preview" src="" style="max-height:100px; display:none;">
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { db, doc, getDoc, setDoc } from '../js/firebase.js';
+
+        const docRef = doc(db, "content", "about");
+        const imgInput = document.getElementById('about-image');
+        const imgPrev = document.getElementById('image-preview');
+
+        imgInput.addEventListener('input', () => {
+            if(imgInput.value) { imgPrev.src = imgInput.value; imgPrev.style.display='block'; }
+            else { imgPrev.style.display='none'; }
+        });
+
+        // Load Data
+        async function loadData() {
+            try {
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    document.getElementById('about-name').value = data.name || '';
+                    document.getElementById('about-role').value = data.role || '';
+                    document.getElementById('about-bio').value = data.bio || '';
+                    document.getElementById('about-image').value = data.image || '';
+                    if(data.image) {
+                        imgPrev.src = data.image;
+                        imgPrev.style.display = 'block';
+                    }
+                }
+            } catch (e) {
+                console.error("Error loading data:", e);
+            }
+        }
+
+        // Save Data
+        document.getElementById('save-btn').addEventListener('click', async () => {
+            const btn = document.getElementById('save-btn');
+            btn.textContent = 'Saving...';
+            try {
+                await setDoc(docRef, {
+                    name: document.getElementById('about-name').value,
+                    role: document.getElementById('about-role').value,
+                    bio: document.getElementById('about-bio').value,
+                    image: document.getElementById('about-image').value
+                });
+                alert("Saved successfully!");
+            } catch (e) {
+                console.error("Error saving:", e);
+                alert("Error saving data.");
+            }
+            btn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+        });
+
+        loadData();
+    </script>
+</body>
+</html>
