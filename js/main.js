@@ -18,17 +18,17 @@ class PortfolioWebsite {
             {
                 title: "Brand Identity",
                 category: "Branding",
-                image: "https://via.placeholder.com/600x450/e0e0e0/888888?text=Brand+Identity" // Placeholder
+                image: "https://i.ibb.co/Rp1cWK7j/270463.jpg" // Placeholder
             },
             {
                 title: "Social Media Pack",
                 category: "Social Media",
-                image: "https://via.placeholder.com/600x450/e0e0e0/888888?text=Social+Media" // Placeholder
+                image: "https://i.ibb.co/nqjD13dz/20250429-130954.jpg" // Placeholder
             },
             {
                 title: "App Interface",
                 category: "UI Design",
-                image: "https://via.placeholder.com/600x450/e0e0e0/888888?text=App+UI" // Placeholder
+                image: "https://i.ibb.co/vCb14vHK/pm-1759732970959-cmp.jpg" // Placeholder
             }
         ];
     }
