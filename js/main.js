@@ -18,7 +18,7 @@ class PortfolioWebsite {
             {
                 title: "Brand Identity",
                 category: "Branding",
-                image: "https://i.ibb.co/Rp1cWK7j/270463.jpg" // Placeholder
+                image: "https://i.ibb.co/Z6r0pBPM/pm-1759732974595-cmp.jpg" // Placeholder
             },
             {
                 title: "Social Media Pack",
