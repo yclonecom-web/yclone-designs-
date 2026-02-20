@@ -1,131 +1,76 @@
-// Main Website Functionality
-class PortfolioWebsite {
-    constructor() {
-        this.init();
-    }
 
-    async init() {
-        // We load featured projects if they exist, otherwise we let the static HTML handle it
-        this.loadFeaturedProjects();
-        this.setupSmoothScroll();
-        this.setupHoverEffects();
-        this.initAnimations();
-    }
-
-    // Static Data for Featured Projects (Fallback since we don't have the JSON file in this view)
-    getStaticProjects() {
-        return [
-            {
-                title: "Brand Identity",
-                category: "Branding",
-                image: "https://i.ibb.co/0ys86XV6/meta.png" // Placeholder
-            },
-            {
-                title: "Social Media Pack",
-                category: "Social Media",
-                image: "https://i.ibb.co/nqjD13dz/20250429-130954.jpg" // Placeholder
-            },
-            {
-                title: "App Interface",
-                category: "UI Design",
-                image: "https://i.ibb.co/vCb14vHK/pm-1759732970959-cmp.jpg" // Placeholder
-            }
-        ];
-    }
-
-    async loadFeaturedProjects() {
-        const container = document.getElementById('featured-projects');
-        if (!container) return;
-
-        // Try to fetch, fall back to static data if file missing
-        let projects = [];
-        try {
-            const response = await fetch('data/content.json');
-            if(response.ok) {
-                const data = await response.json();
-                projects = data.portfolio.filter(p => p.featured).slice(0, 3);
-            } else {
-                throw new Error("File not found");
-            }
-        } catch (error) {
-            // Use static fallback for preview purposes
-            projects = this.getStaticProjects();
-        }
-
-        container.innerHTML = ''; // Clear loading state
-        
-        projects.forEach((project, index) => {
-            const projectElement = document.createElement('div');
-            projectElement.className = 'portfolio-item fade-in-up';
-            projectElement.style.animationDelay = `${index * 0.1}s`;
-            projectElement.innerHTML = `
-                <img src="${project.image}" alt="${project.title}" loading="lazy">
-                <div class="portfolio-overlay">
-                    <h3>${project.title}</h3>
-                    <p>${project.category}</p>
-                </div>
-            `;
-            container.appendChild(projectElement);
-        });
-    }
-
-    setupSmoothScroll() {
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                const href = this.getAttribute('href');
-                if (href === '#' || !href.startsWith('#')) return;
-                
-                e.preventDefault();
-                const target = document.querySelector(href);
-                if (target) {
-                    const headerOffset = 80;
-                    const elementPosition = target.getBoundingClientRect().top;
-                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        document.addEventListener('DOMContentLoaded', () => {
             
-                    window.scrollTo({
-                        top: offsetPosition,
-                        behavior: "smooth"
-                    });
-                }
+            /* --- 1. Preloader & Reveal Sequence --- */
+            const preloader = document.querySelector('.preloader');
+            const heroText = document.querySelector('.display-text');
+            const heroLabel = document.querySelector('.hero-label');
+
+            setTimeout(() => {
+                // Lift Curtain
+                preloader.classList.add('hidden');
+                
+                // Trigger Text Animation AFTER curtain is moving
+                setTimeout(() => {
+                    heroText.classList.add('visible');
+                    heroLabel.classList.add('visible');
+                }, 400); // Slight delay for dramatic effect
+            }, 1500);
+
+            /* --- 2. Custom Cursor --- */
+            const cursorDot = document.querySelector('.cursor-dot');
+            const cursorOutline = document.querySelector('.cursor-outline');
+            
+            window.addEventListener('mousemove', (e) => {
+                const posX = e.clientX;
+                const posY = e.clientY;
+
+                cursorDot.style.left = `${posX}px`;
+                cursorDot.style.top = `${posY}px`;
+
+                cursorOutline.animate({
+                    left: `${posX}px`,
+                    top: `${posY}px`
+                }, { duration: 500, fill: "forwards" });
+            });
+
+            /* --- 3. Hover Interactions --- */
+            const hoverTriggers = document.querySelectorAll('a, button, .hover-trigger');
+            hoverTriggers.forEach(trigger => {
+                trigger.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+                trigger.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+            });
+
+            /* --- 4. Sidebar Toggle --- */
+            const menuToggle = document.getElementById('menuToggle');
+            const sidebar = document.getElementById('sidebar');
+            
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+                menuToggle.classList.toggle('open');
+            });
+
+            /* --- 5. Scroll Animations --- */
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('in-view');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.work-item').forEach(item => observer.observe(item));
+
+            /* --- 6. Parallax Mouse Move --- */
+            document.addEventListener('mousemove', (e) => {
+                const shapes = document.querySelectorAll('.shape');
+                const x = (window.innerWidth - e.pageX * 2) / 100;
+                const y = (window.innerHeight - e.pageY * 2) / 100;
+
+                shapes.forEach(shape => {
+                    const speed = shape.getAttribute('data-speed');
+                    shape.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
+                });
             });
         });
-    }
-
-    setupHoverEffects() {
-        // Minimal hover lift for cards
-        const cards = document.querySelectorAll('.service-card');
-        cards.forEach(card => {
-            card.addEventListener('mouseenter', () => {
-                card.style.transform = 'translateY(-5px)';
-            });
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'translateY(0)';
-            });
-        });
-    }
-
-    initAnimations() {
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: "0px 0px -50px 0px"
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('fade-in-up');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.service-card, .process-step, .stat-item').forEach(el => {
-            el.style.opacity = '0'; // Hide initially
-            observer.observe(el);
-        });
-    }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    window.portfolio = new PortfolioWebsite();
-});
+    
