@@ -306,6 +306,7 @@ button { font-family: inherit; cursor: pointer; }
     font-size: 0.95rem;
     margin-bottom: 1.5rem;
     flex: 1;
+    font-weight: 300;
 }
 
 .card-footer {
