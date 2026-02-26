@@ -22,7 +22,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Navigation -->
+        <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
             <a href="index.html" class="logo">YCLONE</a>
@@ -44,9 +44,10 @@
 
     <!-- About Hero -->
     <section class="page-hero">
-        <div class="container">
-            <h1 class="hero-title">About <span class="accent">Yclone</span></h1>
-            <p class="hero-subtitle">The story behind the designs</p>
+        <div class="hero-decor"></div>
+        <div class="container reveal">
+            <h1 class="hero-title">Crafting Visuals That <br><span class="accent">Speak Volumes.</span></h1>
+            <p class="hero-subtitle delay-1">I don't just create pretty pictures. I build visual identities that capture hearts, communicate clearly, and drive real-world impact for ambitious brands.</p>
         </div>
     </section>
 
@@ -54,57 +55,144 @@
     <section class="about-content">
         <div class="container">
             <div class="about-grid">
-                <div class="about-image">
+                <div class="about-image reveal">
                     <div class="image-frame">
-                        <img src="assets/images/designer2.png" alt="Nti Isaac Kwasi - Graphic Designer" id="about-profile">
+                        <!-- Added an onerror fallback just in case the local image doesn't load in preview -->
+                        <img src="assets/images/designer2.png" onerror="this.src='https://placehold.co/600x800/2563EB/ffffff?text=Isaac+Kwasi'" alt="Nti Isaac Kwasi - Graphic Designer" id="about-profile">
                     </div>
                     <div class="image-caption">
                         <h4>Nti Isaac Kwasi</h4>
-                        <p>Founder & Lead Designer</p>
+                        <p>Founder & Creative Director</p>
                     </div>
                 </div>
                 <div class="about-text">
-                    <h2>Hello, I'm Isaac</h2>
-                    <p class="lead">A passionate graphic designer with over 3 years of experience transforming ideas into visual masterpieces.</p>
+                    <h2 class="reveal delay-1">Hello, I'm Isaac. I pour my soul into every pixel.</h2>
+                    <p class="lead reveal delay-2">With over 3 years of deep creative immersion, I've transformed raw concepts into powerful visual masterpieces that help businesses stand out and connect deeply with their audience.</p>
                     
-                    <div class="bio-section">
-                        <h3>My Design Philosophy</h3>
-                        <p>Design is where intention becomes visible. I don’t design to decorate screens—I design to clarify ideas, shape perception, and guide decisions. Every element earns its place, and every interaction is purposeful.</p>
-                        <p>I work at the intersection of logic and creativity, translating complex goals into clear, engaging experiences. When design is thoughtful and aligned, it becomes more than visual appeal—it becomes influence.</p>
+                    <div class="bio-section reveal delay-3">
+                        <h3><i class="fas fa-heart" style="color: var(--primary-color);"></i> My Design Philosophy</h3>
+                        <p>Design is where intention becomes visible. I don’t design merely to decorate screens or fill empty spaces—I design to clarify complex ideas, shape human perception, and subtly guide decisions. I believe every single element must earn its place, and every interaction must serve a specific, strategic purpose.</p>
+                        <p>I work at the magical intersection of logic and creativity, translating your business goals into clear, engaging, and unforgettable experiences. When design is thoughtful, empathetic, and aligned with your vision, it becomes more than visual appeal—it becomes profound influence.</p>
                     </div>
                     
-                    <div class="bio-section">
-                        <h3>My Journey</h3>
-                        <p>Started as a freelance designer while studying Business Administration at university. Over the years, I've worked with clients across various industries, from startups to established corporations, helping them build stronger visual identities.</p>
-                        <p>Yclone was born from a desire to create a brand that represents precision, creativity, and transformation—values that guide every project I undertake.</p>
+                    <div class="bio-section reveal">
+                        <h3><i class="fas fa-route" style="color: var(--primary-color);"></i> The Yclone Journey</h3>
+                        <p>My journey began as a hungry freelance designer, sketching ideas between classes while studying Visual Arts at university. Over the years, I've had the privilege of partnering with diverse clients—from passionate local startups to established corporate giants—helping them discover and amplify their authentic visual voices.</p>
+                        <p><strong>Yclone</strong> was born from a burning desire to create a studio that stands for precision, boundless creativity, and genuine transformation. These aren't just buzzwords; they are the core values that dictate every project I touch.</p>
                     </div>
                     
-                    <div class="skills-section">
-                        <h3>Core Skills</h3>
+                    <div class="skills-section reveal">
+                        <h3><i class="fas fa-bolt" style="color: var(--primary-color);"></i> My Arsenal</h3>
                         <div class="skills-grid">
                             <div class="skill-item">
-                                <span class="skill-name">Brand Identity</span>
-                                <div class="skill-bar"><div class="skill-level" style="width: 95%"></div></div>
+                                <div class="skill-header">
+                                    <span class="skill-name">Brand Identity & Strategy</span>
+                                    <span class="skill-percentage">95%</span>
+                                </div>
+                                <div class="skill-bar"><div class="skill-level" data-width="95%"></div></div>
                             </div>
                             <div class="skill-item">
-                                <span class="skill-name">Social Media Graphics</span>
-                                <div class="skill-bar"><div class="skill-level" style="width: 98%"></div></div>
+                                <div class="skill-header">
+                                    <span class="skill-name">Social Media & Digital Design</span>
+                                    <span class="skill-percentage">98%</span>
+                                </div>
+                                <div class="skill-bar"><div class="skill-level" data-width="98%"></div></div>
                             </div>
                             <div class="skill-item">
-                                <span class="skill-name">Typography</span>
-                                <div class="skill-bar"><div class="skill-level" style="width: 92%"></div></div>
+                                <div class="skill-header">
+                                    <span class="skill-name">Typography & Layouting</span>
+                                    <span class="skill-percentage">92%</span>
+                                </div>
+                                <div class="skill-bar"><div class="skill-level" data-width="92%"></div></div>
                             </div>
                             <div class="skill-item">
-                                <span class="skill-name">Adobe Creative Suite</span>
-                                <div class="skill-bar"><div class="skill-level" style="width: 96%"></div></div>
+                                <div class="skill-header">
+                                    <span class="skill-name">Adobe Creative Suite Mastery</span>
+                                    <span class="skill-percentage">96%</span>
+                                </div>
+                                <div class="skill-bar"><div class="skill-level" data-width="96%"></div></div>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="cta-section">
-                        <a href="portfolio.html" class="btn-primary">View My Work</a>
-                        <a href="contact.html" class="btn-outline">Get in Touch</a>
+                    <div class="cta-section reveal delay-1">
+                        <a href="portfolio.html" class="btn-primary">
+                            <i class="fas fa-eye"></i> View My Portfolio
+                        </a>
+                        <a href="contact.html" class="btn-outline">
+                            <i class="fas fa-paper-plane"></i> Let's Collaborate
+                        </a>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Hire Me Section (NEW) -->
+    <section class="why-hire-me">
+        <div class="container">
+            <h2 class="section-title reveal">Why Hire Me?</h2>
+            <p class="section-subtitle reveal delay-1">Choosing a designer is about finding a partner you can trust. Here is why partnering with Yclone is the smartest move for your brand.</p>
+            
+            <div class="benefits-grid">
+                <div class="benefit-card reveal delay-1">
+                    <div class="benefit-icon">
+                        <i class="fas fa-chess-knight"></i>
+                    </div>
+                    <h4>Strategic Thinking</h4>
+                    <p>I don't just make things look pretty. I dive deep into your target audience, competitors, and business goals to create designs that actually solve problems and generate ROI.</p>
+                </div>
+                <div class="benefit-card reveal delay-2">
+                    <div class="benefit-icon">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <h4>Unwavering Passion</h4>
+                    <p>Good design requires obsessive attention to detail. I treat your brand with the same love and respect as I treat my own, ensuring nothing leaves the studio unless it's perfect.</p>
+                </div>
+                <div class="benefit-card reveal delay-3">
+                    <div class="benefit-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h4>Clear Communication</h4>
+                    <p>No confusing jargon, no ghosting. I believe in transparent, honest collaboration. You'll always know exactly where your project stands at every single phase.</p>
+                </div>
+                <div class="benefit-card reveal delay-4">
+                    <div class="benefit-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h4>Reliable Delivery</h4>
+                    <p>Deadlines are sacred to me. I've built my reputation on delivering high-quality, pixel-perfect creative assets precisely when I say I will. Zero excuses.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- My Creative Process (NEW) -->
+    <section class="process-section">
+        <div class="container">
+            <h2 class="section-title reveal">My Creative Process</h2>
+            <p class="section-subtitle reveal delay-1">Great design isn't magic. It's the result of a deliberate, proven workflow designed to consistently extract the best ideas.</p>
+            
+            <div class="process-grid">
+                <div class="process-step reveal delay-1">
+                    <div class="step-number"><i class="fas fa-search"></i></div>
+                    <h4>1. Discover</h4>
+                    <p>We start by listening. I learn everything about your brand, audience, and the unique challenges you're facing.</p>
+                </div>
+                <div class="process-step reveal delay-2">
+                    <div class="step-number"><i class="fas fa-lightbulb"></i></div>
+                    <h4>2. Concept</h4>
+                    <p>Brainstorming and ideation. I develop multiple creative directions and mood boards to align our visual vision.</p>
+                </div>
+                <div class="process-step reveal delay-3">
+                    <div class="step-number"><i class="fas fa-pen-nib"></i></div>
+                    <h4>3. Craft</h4>
+                    <p>The magic happens here. I meticulously design, refine, and polish the chosen concept into a beautiful reality.</p>
+                </div>
+                <div class="process-step reveal delay-4">
+                    <div class="step-number"><i class="fas fa-rocket"></i></div>
+                    <h4>4. Deliver</h4>
+                    <p>Final hand-off. You receive organized, ready-to-use files across all formats needed to launch your brand.</p>
                 </div>
             </div>
         </div>
@@ -113,30 +201,32 @@
     <!-- Experience Timeline -->
     <section class="experience">
         <div class="container">
-            <h2 class="section-title">Professional Journey</h2>
+            <h2 class="section-title reveal">Professional Journey</h2>
+            <p class="section-subtitle reveal delay-1">A timeline of my growth, learning, and the stepping stones that shaped my expertise.</p>
+            
             <div class="timeline">
-                <div class="timeline-item">
+                <div class="timeline-item reveal delay-1">
                     <div class="timeline-date">2025 - Present</div>
                     <div class="timeline-content">
                         <h3>Founder & Lead Designer</h3>
                         <h4>Yclone Design Studio</h4>
-                        <p>Leading all design projects, managing client relationships, and establishing brand identity for diverse clients.</p>
+                        <p>Directing all creative operations, establishing high-impact brand identities from scratch, and nurturing long-term relationships with clients who demand excellence.</p>
                     </div>
                 </div>
-                <div class="timeline-item">
+                <div class="timeline-item reveal delay-2">
                     <div class="timeline-date">2024 - 2025</div>
                     <div class="timeline-content">
                         <h3>Senior Graphic Designer</h3>
                         <h4>Creative Solutions Agency</h4>
-                        <p>Worked on major campaigns for international brands, specializing in social media and digital marketing materials.</p>
+                        <p>Spearheaded visual campaigns for major international brands. Mentored junior designers and specialized in crafting viral social media and digital marketing materials.</p>
                     </div>
                 </div>
-                <div class="timeline-item">
+                <div class="timeline-item reveal delay-3">
                     <div class="timeline-date">2023 - 2024</div>
                     <div class="timeline-content">
                         <h3>Junior Designer</h3>
                         <h4>Pixel Perfect Studio</h4>
-                        <p>Started professional career focusing on print design, logo creation, and brand development.</p>
+                        <p>Built a solid foundation focusing on precise print design layout, vector logo creation, and comprehensive brand development rulebooks.</p>
                     </div>
                 </div>
             </div>
@@ -146,27 +236,29 @@
     <!-- Tools & Software -->
     <section class="tools-section">
         <div class="container">
-            <h2 class="section-title">Tools I Use</h2>
+            <h2 class="section-title reveal">Weapons of Choice</h2>
+            <p class="section-subtitle reveal delay-1">The industry-standard software I use daily to bring vivid imagination into reality.</p>
+            
             <div class="tools-grid">
-                <div class="tool-item">
+                <div class="tool-item reveal delay-1">
                     <i class="fab fa-adobe"></i>
-                    <h4>Adobe Creative Suite</h4>
-                    <p>Photoshop, Illustrator, InDesign</p>
+                    <h4>Adobe Creative Cloud</h4>
+                    <p>Mastery of Photoshop, Illustrator, and InDesign for flawless pixel and vector work.</p>
                 </div>
-                <div class="tool-item">
-                    <i class="fas fa-paint-brush"></i>
+                <div class="tool-item reveal delay-2">
+                    <i class="fab fa-figma"></i>
                     <h4>Figma</h4>
-                    <p>UI/UX Design & Prototyping</p>
+                    <p>Crafting intuitive User Interfaces and seamless Web Prototyping.</p>
                 </div>
-                <div class="tool-item">
+                <div class="tool-item reveal delay-3">
                     <i class="fas fa-video"></i>
                     <h4>After Effects</h4>
-                    <p>Motion Graphics</p>
+                    <p>Bringing static designs to life with dynamic Motion Graphics and animation.</p>
                 </div>
-                <div class="tool-item">
+                <div class="tool-item reveal delay-4">
                     <i class="fas fa-cube"></i>
                     <h4>Blender</h4>
-                    <p>3D Modeling & Rendering</p>
+                    <p>Creating immersive 3D Modeling and high-quality rendering environments.</p>
                 </div>
             </div>
         </div>
@@ -175,10 +267,10 @@
     <!-- Footer -->
     <footer>
         <div class="container">
-            <div class="footer-content">
+            <div class="footer-content reveal">
                 <div class="footer-brand">
                     <h3>YCLONE</h3>
-                    <p>Visual Stories, Masterfully Crafted</p>
+                    <p>Visual Stories, Masterfully Crafted. Turning ordinary concepts into extraordinary digital experiences.</p>
                 </div>
                 <div class="footer-links">
                     <h4>Quick Links</h4>
@@ -190,20 +282,19 @@
                 <div class="social-links">
                     <h4>Connect With Me</h4>
                     <div class="social-icons">
-                        <a href="https://www.linkedin.com/in/nti-isaac-aa5632368?utm_source=share_via&utm_content=profile&utm_medium=member_android" class="social-link"><i class="fab fa-linkedin"></i></a>
-                        <a href="https://www.instagram.com/yclone_designs?igsh=MWl3amVyYmVyMHYyaA==" class="social-link"><i class="fab fa-instagram"></i></a>
-                        <a href="https://www.facebook.com/profile.php?id=61571324127681" class="social-link"><i class="fab fa-facebook"></i></a>
-                        
-                        <a href="https://www.behance.net/ntiisaackwasi" class="social-link"><i class="fab fa-behance"></i></a>
-                        
+                        <a href="https://www.linkedin.com/in/nti-isaac-aa5632368?utm_source=share_via&utm_content=profile&utm_medium=member_android" class="social-link" target="_blank" rel="noopener"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://www.instagram.com/yclone_designs?igsh=MWl3amVyYmVyMHYyaA==" class="social-link" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.facebook.com/profile.php?id=61571324127681" class="social-link" target="_blank" rel="noopener"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.behance.net/ntiisaackwasi" class="social-link" target="_blank" rel="noopener"><i class="fab fa-behance"></i></a>
                     </div>
                 </div>
             </div>
-            <p class="copyright">&copy; 2026 Yclone by Nti Isaac Kwasi. All rights reserved.</p>
+            <p class="copyright reveal delay-2">
+                &copy; 2026 Yclone by Nti Isaac Kwasi. <i class="fas fa-bolt" style="color: var(--primary-color);"></i> All rights reserved.
+            </p>
         </div>
     </footer>
-
-    <script src="js/main.js"></script>
+    
     <script src="js/about.js"></script>
 </body>
 </html>
