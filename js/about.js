@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-            // Hamburger Menu
+            
+            // --- Hamburger Menu Logic ---
             const hamburger = document.querySelector('.hamburger');
             const navMenu = document.querySelector('.nav-menu');
             
@@ -18,27 +19,50 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
 
-            // Animate Skills on Scroll
+            // --- Scroll Reveal Animation Logic ---
+            // This detects when elements enter the screen and adds the 'active' class
+            const revealElements = document.querySelectorAll('.reveal');
+            
+            const revealObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        // Optional: Unobserve after revealing if you only want it to happen once
+                        // observer.unobserve(entry.target); 
+                    }
+                });
+            }, {
+                root: null,
+                threshold: 0.15, // Trigger when 15% of the element is visible
+                rootMargin: "0px 0px -50px 0px" // Slightly offset trigger point
+            });
+
+            revealElements.forEach(el => {
+                revealObserver.observe(el);
+            });
+
+            // --- Animate Skills on Scroll ---
             const skillsSection = document.querySelector('.skills-section');
             const progressBars = document.querySelectorAll('.skill-level');
             
             if (skillsSection) {
-                const observer = new IntersectionObserver((entries) => {
+                const skillsObserver = new IntersectionObserver((entries) => {
                     entries.forEach(entry => {
                         if (entry.isIntersecting) {
                             progressBars.forEach(bar => {
-                                const width = bar.style.width;
-                                bar.style.width = '0'; // Reset
+                                // Read the target width from a data attribute
+                                const targetWidth = bar.getAttribute('data-width');
+                                // Use a timeout to ensure the CSS transition fires smoothly
                                 setTimeout(() => {
-                                    bar.style.width = width; // Animate to value
-                                }, 100);
+                                    bar.style.width = targetWidth; 
+                                }, 300);
                             });
-                            observer.unobserve(entry.target);
+                            // We only want the bars to animate once
+                            skillsObserver.unobserve(entry.target);
                         }
                     });
-                }, { threshold: 0.2 });
+                }, { threshold: 0.3 });
                 
-                observer.observe(skillsSection);
+                skillsObserver.observe(skillsSection);
             }
         });
-    
