@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Post | Yclone</title>
+    <link rel="stylesheet" href="css/blog.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Small override to make the two‑column layout work */
+        .blog-post-wrapper {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+        @media (max-width: 768px) {
+            .blog-post-wrapper {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">YCLONE</a>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="portfolio.html">Portfolio</a></li>
+                <li><a href="blog.html" class="active">Blog</a></li>
+                <li><a href="contact.html" class="btn-outline">Contact</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main content with sidebar -->
+    <div class="blog-post-wrapper">
+        <!-- LEFT COLUMN: Post content -->
+        <main>
+            <div id="post-content">
+                <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading post...</div>
+            </div>
+        </main>
+
+        <!-- RIGHT COLUMN: Sidebar (exactly as on blog.html) -->
+        <aside class="blog-sidebar">
+            <!-- Search Widget -->
+            <div class="sidebar-widget">
+                <h3 class="widget-title">Search</h3>
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="Search articles...">
+                    <button id="search-btn"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+
+            <!-- Categories Widget -->
+            <div class="sidebar-widget">
+                <h3 class="widget-title">Categories</h3>
+                <ul class="categories-list">
+                    <li><button class="category-btn" data-category="all">All Articles</button></li>
+                    <li><button class="category-btn" data-category="trends">Design Trends</button></li>
+                    <li><button class="category-btn" data-category="typography">Typography</button></li>
+                    <li><button class="category-btn" data-category="branding">Branding</button></li>
+                    <li><button class="category-btn" data-category="tutorials">Tutorials</button></li>
+                    <li><button class="category-btn" data-category="business">Business</button></li>
+                </ul>
+            </div>
+
+            <!-- Newsletter Widget -->
+            <div class="sidebar-widget newsletter-widget">
+                <h3 class="widget-title">Join the Newsletter</h3>
+                <p>Get the latest design resources delivered to your inbox weekly.</p>
+                <form id="sidebar-newsletter">
+                    <input type="email" placeholder="Your email address" required>
+                    <button type="submit" class="btn-primary">Subscribe</button>
+                </form>
+            </div>
+
+            <!-- Tags Widget -->
+            <div class="sidebar-widget">
+                <h3 class="widget-title">Popular Tags</h3>
+                <div class="tags-cloud">
+                    <a href="#" class="tag">#uiux</a>
+                    <a href="#" class="tag">#minimalism</a>
+                    <a href="#" class="tag">#color</a>
+                    <a href="#" class="tag">#freelance</a>
+                    <a href="#" class="tag">#tools</a>
+                    <a href="#" class="tag">#inspiration</a>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>YCLONE</h3>
+                    <p>Visual Stories, Masterfully Crafted</p>
+                </div>
+                <div class="footer-links">
+                    <a href="index.html">Home</a>
+                    <a href="services.html">Services</a>
+                    <a href="portfolio.html">Portfolio</a>
+                    <a href="contact.html">Contact</a>
+                </div>
+                <div class="social-links">
+                    <a href="https://www.linkedin.com/in/nti-isaac-aa5632368"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://www.instagram.com/yclone_designs"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.facebook.com/profile.php?id=61571324127681"><i class="fab fa-facebook"></i></a>
+                </div>
+            </div>
+            <p class="copyright">&copy; 2026 Yclone by Nti Isaac Kwasi. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Firebase Module: Loads the current post -->
+    <script type="module">
+        import { db, doc, getDoc } from './js/firebase.js';
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const postId = urlParams.get('id');
+        const container = document.getElementById('post-content');
+
+        if (!postId) {
+            container.innerHTML = '<p style="color: red; text-align: center;">No post specified.</p>';
+        } else {
+            loadPost(postId);
+        }
+
+        async function loadPost(id) {
+            try {
+                const docRef = doc(db, 'blog', id);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    renderPost(data);
+                } else {
+                    container.innerHTML = '<p style="text-align: center;">Post not found.</p>';
+                }
+            } catch (error) {
+                console.error('Error loading post:', error);
+                container.innerHTML = '<p style="color: red; text-align: center;">Error loading post.</p>';
+            }
+        }
+
+        function renderPost(data) {
+            const date = data.createdAt 
+                ? new Date(data.createdAt.seconds * 1000).toLocaleDateString('en-US', {
+                    year: 'numeric', month: 'long', day: 'numeric'
+                  })
+                : 'Recent';
+
+            const imageUrl = data.imageImageUrl || 'https://via.placeholder.com/800x400/f1f5f9/94a3b8?text=No+Image';
+
+            container.innerHTML = `
+                <article class="blog-post-full">
+                    ${imageUrl ? `<img src="${imageUrl}" alt="${data.title}" style="width:100%; max-height:400px; object-fit:cover; border-radius:12px; margin-bottom:1.5rem;">` : ''}
+                    <h1 style="font-size:2.5rem; margin-bottom:1rem;">${data.title || 'Untitled'}</h1>
+                    <div class="post-meta" style="display:flex; gap:2rem; color:#64748b; margin-bottom:1.5rem;">
+                        <span><i class="far fa-calendar"></i> ${date}</span>
+                        <span><i class="far fa-folder"></i> ${data.category || 'Uncategorized'}</span>
+                    </div>
+                    ${data.excerpt ? `
+                        <div style="font-size:1.2rem; color:#4b5563; border-left:4px solid #2563eb; padding-left:1.5rem; margin-bottom:2rem;">
+                            ${data.excerpt}
+                        </div>
+                    ` : ''}
+                    <div style="line-height:1.8; font-size:1.1rem;">
+                        ${data.content || '<p>No content available.</p>'}
+                    </div>
+                    <div style="margin-top:3rem; padding-top:1.5rem; border-top:1px solid #e2e8f0;">
+                        <a href="blog.html" style="color:#2563eb;">← Back to all articles</a>
+                    </div>
+                </article>
+            `;
+        }
+    </script>
+
+    <!-- Sidebar & Mobile Menu Interactions (regular JavaScript) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Mobile menu (hamburger) ---
+            const hamburger = document.querySelector('.hamburger');
+            const navMenu = document.querySelector('.nav-menu');
+            if (hamburger && navMenu) {
+                hamburger.addEventListener('click', () => {
+                    hamburger.classList.toggle('active');
+                    navMenu.classList.toggle('active');
+                });
+                navMenu.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        hamburger.classList.remove('active');
+                        navMenu.classList.remove('active');
+                    });
+                });
+            }
+
+            // --- Search widget ---
+            const searchInput = document.getElementById('search-input');
+            const searchBtn = document.getElementById('search-btn');
+            const doSearch = () => {
+                const query = searchInput.value.trim();
+                if (query) {
+                    window.location.href = `blog.html?search=${encodeURIComponent(query)}`;
+                }
+            };
+            if (searchInput && searchBtn) {
+                searchBtn.addEventListener('click', doSearch);
+                searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') doSearch();
+                });
+            }
+
+            // --- Category buttons (redirect to blog with category filter) ---
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const cat = btn.dataset.category;
+                    if (cat === 'all') {
+                        window.location.href = 'blog.html';
+                    } else {
+                        window.location.href = `blog.html?category=${cat}`;
+                    }
+                });
+            });
+
+            // --- Newsletter form (simulate subscription) ---
+            const newsletterForm = document.getElementById('sidebar-newsletter');
+            if (newsletterForm) {
+                newsletterForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const btn = newsletterForm.querySelector('button');
+                    const originalText = btn.textContent;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                    btn.disabled = true;
+
+                    // Simulate API call
+                    setTimeout(() => {
+                        // Show a simple notification
+                        alert('Subscribed successfully! (demo)');
+                        newsletterForm.reset();
+                        btn.textContent = originalText;
+                        btn.disabled = false;
+                    }, 1500);
+                });
+            }
+
+            // Optional: Tags – they already link to '#'; you could later change them to real tag searches.
+        });
+    </script>
+</body>
+</html>
