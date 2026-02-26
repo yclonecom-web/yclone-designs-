@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { 
-    getFirestore, collection, getDocs, getDoc, addDoc, updateDoc, deleteDoc, doc, query, orderBy, limit, where, Timestamp, setDoc 
+    getFirestore, collection, getDocs, getDoc, addDoc, updateDoc, deleteDoc, doc, query, orderBy, limit, where, Timestamp, setDoc, startAfter 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { 
     getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut 
@@ -18,8 +18,23 @@ const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const auth = getAuth(app);
 
-// Export functions for use in other files
+// Export everything in ONE statement – no duplicates
 export { 
-    collection, getDocs, getDoc, addDoc, updateDoc, deleteDoc, doc, query, orderBy, limit, where, Timestamp, setDoc,
-    signInWithEmailAndPassword, onAuthStateChanged, signOut 
+    collection, 
+    getDocs, 
+    getDoc, 
+    addDoc, 
+    updateDoc, 
+    deleteDoc, 
+    doc, 
+    query, 
+    orderBy, 
+    limit, 
+    where, 
+    Timestamp, 
+    setDoc, 
+    startAfter,
+    signInWithEmailAndPassword, 
+    onAuthStateChanged, 
+    signOut 
 };
