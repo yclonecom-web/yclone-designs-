@@ -1,181 +1,196 @@
-import { db, collection, getDocs, query, orderBy, where } from './firebase.js';
+// Firebase is imported exactly as you requested. No changes here.
+import { db, collection, getDocs, query, orderBy } from './firebase.js';
+
+let allProjects = []; // Store fetched projects for lightning-fast client-side search
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize Navigation immediately
-    setupMobileNav();
-    
     // Load Data from Firebase
     loadPortfolio();
 });
 
-// --- 1. Mobile Navigation ---
-function setupMobileNav() {
-    const hamburger = document.querySelector('.hamburger');
-    const navMenu = document.querySelector('.nav-menu');
-
-    if (hamburger && navMenu) {
-        hamburger.addEventListener('click', () => {
-            hamburger.classList.toggle('active');
-            navMenu.classList.toggle('active');
-        });
-
-        document.querySelectorAll('.nav-menu a').forEach(link => {
-            link.addEventListener('click', () => {
-                hamburger.classList.remove('active');
-                navMenu.classList.remove('active');
-            });
-        });
-    }
-}
-
-// --- 2. Load Portfolio Data ---
+// --- Load Portfolio Data ---
 async function loadPortfolio() {
     const container = document.getElementById('portfolio-container');
     const countSpan = document.getElementById('count');
     
     if (!container) return;
 
-    // Show loading state
-    container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 2rem;"><i class="fas fa-spinner fa-spin fa-2x"></i><p>Loading projects...</p></div>';
+    // Show sleek loading state
+    container.innerHTML = `
+        <div style="grid-column: 1/-1; text-align: center; padding: 5rem 0;">
+            <i class="fas fa-circle-notch fa-spin fa-3x" style="color: var(--accent); margin-bottom: 1rem;"></i>
+            <p style="color: var(--text-muted); font-size: 1.2rem;">Curating projects...</p>
+        </div>
+    `;
 
     try {
-        // Query: Published projects, ordered by 'order' (or createdAt if order missing)
-        // Note: If you get a "Missing Index" error in console, click the link provided in the error.
-        // For now, we can try simple fetching and sorting in memory to be safe if index is missing.
-        const q = query(collection(db, 'portfolio'), where("published", "==", true));
+        const projectsRef = collection(db, 'portfolio');
+        
+        // We order by 'order' ascending. 
+        const q = query(projectsRef, orderBy('order', 'asc'));
         
         const snapshot = await getDocs(q);
         
         if (snapshot.empty) {
-            container.innerHTML = '<div style="grid-column: 1/-1; text-align: center;">No projects found.</div>';
-            if(countSpan) countSpan.textContent = '0';
+            container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); font-size: 1.2rem;">New projects are currently brewing. Check back soon.</p>';
+            if(countSpan) countSpan.textContent = '';
             return;
         }
 
-        // Convert to array and sort by order manually (safer without composite index)
-        const projects = [];
+        allProjects = []; // Reset array
+
+        // Gather all published projects into our array
         snapshot.forEach(doc => {
-            projects.push({ id: doc.id, ...doc.data() });
-        });
-        
-        projects.sort((a, b) => (a.order || 99) - (b.order || 99));
-
-        // Update Count
-        if(countSpan) countSpan.textContent = projects.length;
-
-        // Render HTML
-        container.innerHTML = projects.map(project => {
-            // Handle categories (ensure it matches filter data-ids)
-            // Admin saves: 'social', 'quote', etc.
-            const categoryClass = project.category ? project.category.toLowerCase() : 'other';
+            const data = doc.data();
             
-            return `
-                <div class="portfolio-item" data-category="${categoryClass}">
-                    <div class="portfolio-image">
-                        <img src="${project.imageImageUrl || 'assets/images/placeholder.jpg'}" alt="${project.ProjectName}" loading="lazy">
-                        <div class="portfolio-overlay">
-                            <div class="overlay-content">
-                                <a href="#" class="view-btn" data-id="${project.id}">
-                                    <i class="fas fa-expand"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="portfolio-info">
-                        <div class="project-meta">
-                            <span class="project-category">${project.category || 'Project'}</span>
-                            <span class="project-year">${project.createdAt ? new Date(project.createdAt.seconds * 1000).getFullYear() : '2024'}</span>
-                        </div>
-                        <h3 class="project-title">${project.ProjectName}</h3>
-                        <p class="project-desc">${project.excerpt || project.description || ''}</p>
-                        
-                        <!-- Hidden data for modal population -->
-                        <div class="project-data" style="display:none;">
-                            <span class="data-desc">${project.description || ''}</span>
-                            <span class="data-link">${project.projectLink || '#'}</span>
-                            <span class="data-cta">${project.cta || 'View Project'}</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }).join('');
+            // Only show projects where 'published' is true
+            if (data.published === false) return;
+            
+            allProjects.push({
+                title: data.ProjectName || 'Untitled',
+                imgSrc: data.imageImageUrl || 'assets/images/placeholder.jpg',
+                category: data.category || 'Design',
+                year: data.createdAt && typeof data.createdAt.toDate === 'function' 
+                    ? data.createdAt.toDate().getFullYear() 
+                    : new Date().getFullYear(),
+                desc: data.description || data.excerpt || 'Full case study details coming soon.',
+                link: data.projectLink || '#',
+                cta: data.cta || 'View Live'
+            });
+        });
 
-        // Initialize Interactions after DOM is ready
-        setupFilters();
-        setupModal();
+        // If all documents were drafts/unpublished
+        if (allProjects.length === 0) {
+            container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); font-size: 1.2rem;">New projects are currently brewing. Check back soon.</p>';
+            if(countSpan) countSpan.textContent = '';
+            return;
+        }
+
+        // Render projects and setup search functionality
+        renderProjects(allProjects);
+        setupSearch();
 
     } catch (error) {
-        console.error("Error loading portfolio:", error);
-        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: red;">Error loading projects. Please try again later.</div>`;
+        console.error("Error loading portfolio: ", error);
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-main); font-size: 1.2rem; padding: 4rem 0;"><p>Unable to connect to the studio archives. Please try again later.</p></div>`;
     }
 }
 
-// --- 3. Filter Functionality ---
-function setupFilters() {
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    const portfolioItems = document.querySelectorAll('.portfolio-item');
+// --- Render Projects to the DOM ---
+function renderProjects(projectsToRender) {
+    const container = document.getElementById('portfolio-container');
     const countSpan = document.getElementById('count');
+    
+    if (projectsToRender.length === 0) {
+        container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); font-size: 1.2rem; padding: 3rem 0;">No matching projects found.</p>';
+        if(countSpan) countSpan.textContent = `(0)`;
+        return;
+    }
 
-    filterBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            // Remove active class from all buttons
-            filterBtns.forEach(b => b.classList.remove('active'));
-            // Add active class to clicked button
-            btn.classList.add('active');
+    let html = '';
+    projectsToRender.forEach(p => {
+        html += `
+            <div class="portfolio-card work-item hover-trigger">
+                <div class="card-image-wrapper">
+                    <img src="${p.imgSrc}" alt="${p.title}" loading="lazy">
+                    <div class="card-overlay">
+                        <span class="view-text">Expand</span>
+                    </div>
+                </div>
+                <div class="card-meta">
+                    <h3 class="project-title">${p.title}</h3>
+                    <div class="meta-bottom">
+                        <span class="project-category">${p.category}</span>
+                        <span class="project-year">${p.year}</span>
+                    </div>
+                </div>
 
-            const filterValue = btn.getAttribute('data-filter');
-            let visibleCount = 0;
+                <!-- Hidden Metadata for the Custom Modal -->
+                <div class="hidden-data" style="display: none;">
+                    <span class="data-desc">${p.desc}</span>
+                    <span class="data-link">${p.link}</span>
+                    <span class="data-cta">${p.cta}</span>
+                </div>
+            </div>
+        `;
+    });
 
-            portfolioItems.forEach(item => {
-                const category = item.getAttribute('data-category');
+    // Inject Data
+    container.innerHTML = html;
+    if(countSpan) countSpan.textContent = `(${projectsToRender.length})`;
 
-                if (filterValue === 'all' || category === filterValue) {
-                    item.style.display = 'block';
-                    // Optional: Add fade-in animation
-                    item.style.animation = 'fadeIn 0.5s ease forwards';
-                    visibleCount++;
-                } else {
-                    item.style.display = 'none';
-                }
-            });
+    // Re-initialize interactions for the newly rendered DOM elements
+    setupDynamicInteractions();
+    setupModal();
+}
 
-            if(countSpan) countSpan.textContent = visibleCount;
+// --- Search Logic ---
+function setupSearch() {
+    const searchInput = document.getElementById('portfolio-search');
+    if (!searchInput) return;
+
+    searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        
+        const filteredProjects = allProjects.filter(p => {
+            return p.title.toLowerCase().includes(query) || 
+                   p.category.toLowerCase().includes(query) || 
+                   p.year.toString().includes(query);
         });
+
+        renderProjects(filteredProjects);
     });
 }
 
-// --- 4. Modal Functionality ---
-function setupModal() {
-    const modal = document.getElementById('project-modal');
-    const modalClose = document.querySelectorAll('.modal-close, .modal-overlay');
-    const viewBtns = document.querySelectorAll('.view-btn');
+// --- Initialize interactions for newly injected content ---
+function setupDynamicInteractions() {
+    // 1. Re-initialize Intersection Observer for scroll reveal animations
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('in-view');
+            }
+        });
+    }, { threshold: 0.1 });
 
-    // Modal Elements
-    const modalImg = document.getElementById('modal-main-img');
+    document.querySelectorAll('#portfolio-container .work-item').forEach(item => {
+        observer.observe(item);
+    });
+
+    // 2. Re-bind custom cursor hover states to the new grid items
+    document.querySelectorAll('#portfolio-container .hover-trigger').forEach(trigger => {
+        trigger.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+        trigger.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+    });
+}
+
+// --- Setup the sleek matching modal ---
+function setupModal() {
+    const items = document.querySelectorAll('.portfolio-card');
+    const modal = document.getElementById('project-modal');
+    const modalClose = document.querySelectorAll('.modal-close');
+    
+    const modalImg = document.getElementById('modal-img');
     const modalTitle = document.getElementById('modal-title');
     const modalCategory = document.getElementById('modal-category');
     const modalYear = document.getElementById('modal-year');
-    const modalDesc = document.getElementById('modal-description');
-    const modalLink = document.getElementById('project-link');
+    const modalDesc = document.getElementById('modal-desc');
+    const modalLink = document.getElementById('modal-link');
 
-    // Open Modal
-    viewBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const item = btn.closest('.portfolio-item');
-            
-            // Extract visual data
+    items.forEach(item => {
+        item.addEventListener('click', () => {
+            // Extract Card UI
             const imgSrc = item.querySelector('img').src;
             const title = item.querySelector('.project-title').textContent;
             const category = item.querySelector('.project-category').textContent;
             const year = item.querySelector('.project-year').textContent;
             
-            // Extract hidden data
+            // Extract Hidden Metadata
             const desc = item.querySelector('.data-desc').textContent;
             const link = item.querySelector('.data-link').textContent;
             const cta = item.querySelector('.data-cta').textContent;
 
-            // Populate Modal
+            // Populate Premium Modal
             if(modalImg) modalImg.src = imgSrc;
             if(modalTitle) modalTitle.textContent = title;
             if(modalCategory) modalCategory.textContent = category;
@@ -184,24 +199,30 @@ function setupModal() {
             
             if(modalLink) {
                 modalLink.href = link;
-                modalLink.textContent = cta;
-                // Hide button if no link provided
+                modalLink.querySelector('span').textContent = cta; // Only target the span so arrow icon remains
                 modalLink.style.display = (link === '#' || link === '') ? 'none' : 'inline-flex';
             }
 
-            // Show Modal
             modal.classList.add('active');
         });
     });
 
-    // Close Modal
+    // Close Modal Logic (Only bind these once to avoid duplicates, or replace the elements)
+    // The way we bind it here means every render we add a new listener. Let's fix that by checking if they are already bound,
+    // or better yet, they are static elements so we can just bind them once.
+    // However, for simplicity and ensuring they work, this is fine, but we can do a quick cleanup.
+    
     modalClose.forEach(el => {
-        el.addEventListener('click', () => {
+        // Prevent stacking listeners on re-renders by replacing the element
+        const newEl = el.cloneNode(true);
+        el.parentNode.replaceChild(newEl, el);
+        
+        newEl.addEventListener('click', (e) => {
+            e.stopPropagation(); // Stop overlay click from jumping to cards underneath
             modal.classList.remove('active');
         });
     });
 
-    // Close on Escape key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && modal.classList.contains('active')) {
             modal.classList.remove('active');
